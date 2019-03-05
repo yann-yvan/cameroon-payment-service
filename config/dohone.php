@@ -3,15 +3,25 @@
 return [
     /*
      * Start transaction
+     * 
+     * rLocale : le choix de la langue. fr ou en
+     * 
+     * rOnly : Ceci est optionnel. Si vous souhaitez que votre API n’affiche que certains opérateurs,
+     * vous pouvez préciser ces opérateurs ici. 1=MTN, 2=Orange, 3=Express Union, 5=Visa via UBA,
+     * 10=Dohone, 14= Visa via Wari,15=Wari card,16=VISA/MASTERCARD, 17=YUP.
      */
     'start' => [
         'rH' => 'XXXXXXXX',
         'rDvs' => 'XAF',
         'source' => env('APP_NAME'),
         'logo' => asset('assets/images/logo.png'),
-        "endPage" => "https://www.e-afrika.fr",
-        "notifyPage" => "https://www.e-afrika.fr",
-        "cancelPage" => "https://www.e-afrika.fr",
-        "cmd" => "start"
-    ]
+        "endPage" => env('APP_URL'),
+        "notifyPage" => env('APP_URL'),
+        "cancelPage" => env('APP_URL'),
+        "cmd" => "start",
+        'rLocale' => 'fr',
+        'rOnly' => '1, 2, 3'
+    ],
+
+    'url' => 'https://www.my-dohone.com/dohone/pay'
 ];
