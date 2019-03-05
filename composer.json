@@ -1,7 +1,7 @@
 {
     "name": "paymentcm/dohone",
     "description": ":description",
-    "license": "Git",
+    "license": "MIT",
     "authors": [
         {
             "name": "Yann-Yvan",
