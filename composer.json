@@ -1,44 +1,48 @@
 {
-    "name": "paymentcm/dohone",
-    "description": ":description",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Yann-Yvan",
-            "email": "nycorpdev@gmail.com",
-            "homepage": "https://github.com/yann-yvan"
-        }
-    ],
-    "homepage": "https://github.com/paymentcm/dohone",
-    "keywords": ["Laravel", "Dohone"],
-    "require": {
-        "illuminate/support": "~5"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~7.0",
-        "mockery/mockery": "^1.1",
-        "orchestra/testbench": "~3.0",
-        "sempro/phpunit-pretty-print": "^1.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "paymentCm\\Dohone\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "paymentCm\\Dohone\\Tests\\": "packages/paymentCm/Dohone/src",
-"App\\": "app/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "paymentCm\\Dohone\\DohoneServiceProvider"
-            ],
-            "aliases": {
-                "Dohone": "paymentCm\\Dohone\\Facades\\Dohone"
-            }
-        }
+  "name": "paymentcm/dohone",
+  "description": "Payment api for web artisan in cameroon",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Yann-Yvan",
+      "email": "nycorpdev@gmail.com",
+      "homepage": "https://github.com/yann-yvan"
     }
+  ],
+  "homepage": "https://github.com/paymentcm/dohone",
+  "keywords": [
+    "Laravel",
+    "Dohone"
+  ],
+  "require": {
+    "illuminate/support": "~5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~7.0",
+    "mockery/mockery": "^1.1",
+    "orchestra/testbench": "~3.0",
+    "sempro/phpunit-pretty-print": "^1.0",
+    "ixudra/curl": "^6.16"
+  },
+  "autoload": {
+    "psr-4": {
+      "paymentCm\\Dohone\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "paymentCm\\Dohone\\Tests\\": "packages/paymentCm/Dohone/src",
+      "App\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "paymentCm\\Dohone\\DohoneServiceProvider"
+      ],
+      "aliases": {
+        "Dohone": "paymentCm\\Dohone\\Facades\\Dohone"
+      }
+    }
+  }
 }

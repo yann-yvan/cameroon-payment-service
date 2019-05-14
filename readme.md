@@ -3,7 +3,7 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Build Status][ico-travis]][link-travis]
-[![StyleCI][ico-styleci]][link-styleci]
+[![StyleCI][ico-styleci]][link-styleci](https://github.styleci.io/repos/173931351)
 
 This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
 
@@ -42,7 +42,7 @@ If you discover any security related issues, please email nycorpdev@gmail.com in
 
 ## License
 
-Git. Please see the [license file](license.md) for more information.
+MIT. Please see the [license file](license.md) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/paymentcm/dohone.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/paymentcm/dohone.svg?style=flat-square
