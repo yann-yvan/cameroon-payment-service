@@ -14,7 +14,7 @@ return [
         'rH' => 'XXXXXXXX',
         'rDvs' => 'XAF',
         'source' => env('APP_NAME'),
-        'logo' => asset('assets/images/logo.png'),
+        'logo' => 'assets/images/logo.png',
         "endPage" => env('APP_URL'),
         "notifyPage" => env('APP_URL'),
         "cancelPage" => env('APP_URL'),

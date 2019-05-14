@@ -4,7 +4,6 @@ namespace paymentCm\Dohone;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Symfony\Component\HttpFoundation\Request;
 use Ixudra\Curl\Facades\Curl;
 
 class Dohone
@@ -39,23 +38,23 @@ class Dohone
         if ($validator->fails())
             return self::reply($validator->errors(), false);
 
-        return redirect(config('dohone.url'))->withInput($data);
+        return view("payment-simulator");
     }
 
     public static function verify($amount, $paymentToken, $transactionID = null)
     {
         $result = Curl::to(config('dohone.url'))
             ->withData(['idReqDoh' => $paymentToken, 'rMt' => $amount, 'rDvs' => config('dohone.start.rDvs')])
-        ->post();
+            ->post();
 
-       /* $curl = curl_init($request);
-        curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        $result = curl_exec($curl);
-        @curl_close($curl);*/
+        /* $curl = curl_init($request);
+         curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
+         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+         $result = curl_exec($curl);
+         @curl_close($curl);*/
 
         if ($result == 'OK') {
             return self::reply($result);
