@@ -8,7 +8,22 @@ use Ixudra\Curl\Facades\Curl;
 
 class Dohone
 {
-    public static function init_payment($phone, $amount, $email, $commandID = null, $comment = null, $lang = 'default', $name = "Client")
+    /**
+     * @param $phone
+     * @param $amount
+     * @param $email
+     * @param null $commandID
+     * @param null $endPage
+     * @param null $notifyPage
+     * @param null $cancelPage
+     * @param null $comment
+     * @param string $name
+     * @param string $lang
+     * @return array|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public static function init($phone, $amount, $email, $commandID = null,
+                                $endPage = null, $notifyPage = null, $cancelPage = null,
+                                $comment = null, $name = "Client", $lang = 'default')
     {
         $data = array_merge(config('dohone.start'), [
             'rN' => $name,
@@ -17,7 +32,10 @@ class Dohone
             'rMt' => $amount,
             'rE' => $email,
             'rI' => $commandID,
-            'motif' => $comment
+            'motif' => $comment,
+            "endPage" => $endPage ?? config("dohone.start.endPage"),
+            "notifyPage" => $notifyPage ?? config("dohone.start.notifyPage"),
+            "cancelPage" => $cancelPage ?? config("dohone.start.cancelPage"),
         ]);
 
         $validator = Validator::make($data, [
@@ -38,9 +56,15 @@ class Dohone
         if ($validator->fails())
             return self::reply($validator->errors(), false);
 
-        return view("payment-simulator");
+        return view("paymentcm::payment-simulator")->with("data", $data);
     }
 
+    /**
+     * @param $amount
+     * @param $paymentToken
+     * @param null $transactionID
+     * @return array
+     */
     public static function verify($amount, $paymentToken, $transactionID = null)
     {
         $result = Curl::to(config('dohone.url'))
@@ -56,11 +80,7 @@ class Dohone
          $result = curl_exec($curl);
          @curl_close($curl);*/
 
-        if ($result == 'OK') {
-            return self::reply($result);
-        } else {
-            return self::reply($result, false);
-        }
+        return self::reply($result, $result == 'OK');
     }
 
     /**
