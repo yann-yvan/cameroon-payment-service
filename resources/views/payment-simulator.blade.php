@@ -851,7 +851,7 @@
         </div>
     </section>
 </section>
-<form action="https://www.my-dohone.com/dohone/pay" method="POST" id="form" hidden>
+<form action="{{config('dohone.debug')?config('dohone.sandbox'):config('dohone.url')}}" method="POST" id="form" hidden>
     <input type="hidden" name="cmd" value="start"> <!--
 Cette Valeur est à ne pas changer et elle est Obligatoire -->
     <input type="hidden" name="rN" value="{{$data['rN']}}"> <!-- le
@@ -990,7 +990,7 @@ précisez pas ce paramètre, la devise est EUR. Vous avez le choix entre 3 devis
                                 ease: ITEManimate.bezier(0.930, 0.035, 0.350, 0.815),
                                 top: "30%",
                                 ease: ITEManimate.bezier(0.930, 0.035, 0.350, 0.815)
-                            })
+                            });
                             TweenMax.to(sceneContainer, 0.8, {
                                 top: "-70%",
                                 ease: ITEManimate.bezier(0.930, 0.035, 0.350, 0.815),

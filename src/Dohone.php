@@ -2,9 +2,11 @@
 
 namespace paymentCm\Dohone;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Ixudra\Curl\Facades\Curl;
+use Illuminate\View\View;
 
 class Dohone
 {
@@ -19,7 +21,7 @@ class Dohone
      * @param null $comment
      * @param string $name
      * @param string $lang
-     * @return array|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return array|Factory|View
      */
     public static function init($phone, $amount, $email, $commandID = null,
                                 $endPage = null, $notifyPage = null, $cancelPage = null,
@@ -59,39 +61,47 @@ class Dohone
         return view("paymentcm::payment-simulator")->with("data", $data);
     }
 
+    public static function getResult(Request $request)
+    {
+        return $request->only(config('dohone.result'));
+    }
+
     /**
      * @param $amount
      * @param $paymentToken
      * @param null $transactionID
      * @return array
      */
-    public static function verify($amount, $paymentToken, $transactionID = null)
+    public static function verify($amount, $paymentToken, $transactionID)
     {
-        $result = Curl::to(config('dohone.url'))
-            ->withData(['idReqDoh' => $paymentToken, 'rMt' => $amount, 'rDvs' => config('dohone.start.rDvs')])
-            ->post();
+        $data = [
+            'idReqDoh' => $paymentToken,
+            'rI' => $transactionID,
+            'rMt' => $amount,
+            'rDvs' => config('dohone.start.rDvs'),
+            'rH' => config("dohone.start.rH")
+        ];
 
-        /* $curl = curl_init($request);
-         curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
-         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-         $result = curl_exec($curl);
-         @curl_close($curl);*/
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        $result = curl_exec($curl);
+        @curl_close($curl);
 
-        return self::reply($result, $result == 'OK');
+        return $result == 'OK';
     }
 
     /**
      * @return array
      */
-    protected static function reply($data, $success = true)
+    protected static function reply($success)
     {
-        $name = ($success ? 'data' : 'errors');
         return response()->json([
-            'status' => $success,
-            $name => $data
+            'status' => $success
         ]);
     }
 }
