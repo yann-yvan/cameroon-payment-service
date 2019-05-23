@@ -14,10 +14,9 @@ class DohoneServiceProvider extends ServiceProvider
     public function boot()
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'paymentcm');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'paymentcm');
+         $this->loadViewsFrom(__DIR__.'/../resources/views', 'paymentcm');
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
-
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -32,7 +31,7 @@ class DohoneServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/dohone.php', 'dohone');
+        $this->mergeConfigFrom(__DIR__.'/../config/dohone.php', 'dohone');
 
         // Register the service the package provides.
         $this->app->singleton('dohone', function ($app) {
@@ -49,7 +48,7 @@ class DohoneServiceProvider extends ServiceProvider
     {
         return ['dohone'];
     }
-
+    
     /**
      * Console-specific booting.
      *
@@ -59,7 +58,7 @@ class DohoneServiceProvider extends ServiceProvider
     {
         // Publishing the configuration file.
         $this->publishes([
-            __DIR__ . '/../config/dohone.php' => config_path('dohone.php'),
+            __DIR__.'/../config/dohone.php' => config_path('dohone.php'),
         ], 'dohone.config');
 
         // Publishing the views.

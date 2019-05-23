@@ -23,18 +23,5 @@ return [
         'rOnly' => '1, 2, 3'
     ],
 
-    'result' => [
-        'rH',
-        'rDvs',
-        'rI',
-        'rMt',
-        'idReqDoh',
-        'mode'
-    ],
-
-
-    "debug" => true,
-
-    'sandbox' => "https://www.my-dohone.com/dohone-sandbox/pay",
     'url' => 'https://www.my-dohone.com/dohone/pay'
 ];
