@@ -79,20 +79,46 @@ class Dohone
             'rI' => $transactionID,
             'rMt' => $amount,
             'rDvs' => config('dohone.start.rDvs'),
-            'rH' => config("dohone.start.rH")
+            'rH' => config("dohone.start.rH"),
+            'cmd' => "verify"
         ];
 
-        $curl = curl_init();
+        $validator = Validator::make($data, [
+            "idReqDoh" => ['required'],
+            "rMt" => ['required', 'integer'],
+            "rDvs" => ['required', Rule::in(['XAF', 'EUR', 'USD'])],
+            "rI" => ['required'],
+            "cmd" => ['required', Rule::in(['verify'])],
+            'rH' => ['required', 'min:8']
+        ]);
+        if ($validator->fails())
+            return false;
+
+        $curl = curl_init(self::genVerifyUrl($data));
         curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        $result = curl_exec($curl);
+        $result = curl_exec($curl) == 'OK';
         @curl_close($curl);
 
-        return $result == 'OK';
+        return $result;
+    }
+
+    private static function genVerifyUrl(array $data)
+    {
+        $base_url = config("dohone.debug") ? config("dohone.sandbox") : config("dohone.url") . "?";
+        $i = 0;
+        foreach ($data as $key => $value) {
+            if ($i == 0) {
+                $base_url = $base_url . "?" . $key . "=" . $value;
+            } else
+                $base_url = $base_url . "&" . $key . "=" . $value;
+            $i++;
+        }
+
+        return $base_url;
     }
 
     /**
