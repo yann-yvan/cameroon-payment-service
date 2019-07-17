@@ -63,9 +63,9 @@ class DohoneServiceProvider extends ServiceProvider
         ], 'dohone.config');
 
         // Publishing the views.
-        /*$this->publishes([
+        $this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/paymentcm'),
-        ], 'dohone.views');*/
+        ], 'dohone.views');
 
         // Publishing assets.
         /*$this->publishes([
