@@ -6,6 +6,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -56,7 +57,7 @@ class Dohone
             'rH' => ['required', 'min:8']
         ]);
         if ($validator->fails())
-            return self::reply($validator->errors(), false);
+            return self::reply(!$validator->fails(), $validator->errors());
 
         return view("paymentcm::payment-simulator")->with("data", $data);
     }
@@ -96,7 +97,7 @@ class Dohone
             'rH' => ['required', 'min:8']
         ]);
         if ($validator->fails())
-            return false;
+            return self::reply(!$validator->fails(), $validator->errors());
 
         return self::run($data) == 'OK';
     }
@@ -107,7 +108,7 @@ class Dohone
      */
     private static function genVerifyUrl(array $data)
     {
-        $base_url = config("dohone.debug") ? config("dohone.sandbox") : config("dohone.url") . "?";
+        $base_url = config("dohone.debug") ? config("dohone.sandbox") : config("dohone.url");
         $i = 0;
         foreach ($data as $key => $value) {
             if ($i == 0) {
@@ -123,11 +124,12 @@ class Dohone
     /**
      * @return array
      */
-    protected static function reply($success)
+    protected static function reply($success, $message)
     {
-        return response()->json([
-            'status' => $success
-        ]);
+        return [
+            'status' => $success,
+            'message' => $message
+        ];
     }
 
     /**
@@ -168,6 +170,32 @@ class Dohone
 
     /**
      * @param $phone
+     * @param $code
+     * @return array
+     */
+    public static function restSMSConfirmation($phone, $code)
+    {
+        $data = [
+            'cmd' => "cfrmsms",
+            'rT' => $phone,
+            'rCS' => $code,
+        ];
+
+        $validator = Validator::make($data, [
+            "rT" => ['required'],
+            'rCS' => ['required']
+        ]);
+
+        if ($validator->fails())
+            return self::reply(!$validator->fails(), $validator->errors());
+
+        $resSplit = explode(':', self::run($data));
+        return self::reply(Str::contains($resSplit[0], "OK"),
+            Str::ucfirst(trim($resSplit[1])));
+    }
+
+    /**
+     * @param $phone
      * @param $amount
      * @param $email
      * @param null $commandID
@@ -196,7 +224,9 @@ class Dohone
             "endPage" => $endPage ?? config("dohone.start.endPage"),
             "notifyPage" => $notifyPage ?? config("dohone.start.notifyPage"),
         ]);
-        if (empty($orangeCode))
+
+        //check if is not Orange
+        if ($method != 2)
             unset($data['rOTP']);
         unset($data['cancelPage']);
         unset($data['logo']);
@@ -208,7 +238,7 @@ class Dohone
             "endPage" => ['required', 'url'],
             "notifyPage" => ['required', 'url'],
             'rMo' => ['required', Rule::in([1, 2, 3, 10, 17])],
-            'rOTP' => Rule::requiredIf($orangeCode != null),
+            'rOTP' => Rule::requiredIf($method == 2),
             "cmd" => ['required', Rule::in(['start'])],
             "rN" => ['string'],
             "rLocale" => ['required', Rule::in(['fr', 'en'])],
@@ -218,9 +248,11 @@ class Dohone
         ]);
 
         if ($validator->fails())
-            return self::reply($validator->fails());
+            return self::reply(!$validator->fails(), $validator->errors());
 
-        return self::run($data);
+        $resSplit = explode(':', self::run($data));
+        return self::reply(Str::contains($resSplit[0], "OK"),
+            Str::ucfirst(trim($resSplit[1])));
     }
 
     /**
