@@ -2,13 +2,13 @@
 
 namespace paymentCm\Dohone;
 
-use Illuminate\View\View;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class Dohone
 {
@@ -57,7 +57,7 @@ class Dohone
             'rH' => ['required', 'min:8'],
         ]);
         if ($validator->fails()) {
-            return self::reply(! $validator->fails(), $validator->errors());
+            return self::reply(!$validator->fails(), $validator->errors());
         }
 
         return view('paymentcm::payment-simulator')->with('data', $data);
@@ -69,7 +69,7 @@ class Dohone
      */
     public static function getResult(Request $request)
     {
-        return $request->only(config('dohone.result'));
+        return $request->all(config('dohone.result'));
     }
 
     /**
@@ -98,7 +98,7 @@ class Dohone
             'rH' => ['required', 'min:8'],
         ]);
         if ($validator->fails()) {
-            return self::reply(! $validator->fails(), $validator->errors());
+            return self::reply(!$validator->fails(), $validator->errors());
         }
 
         return self::run($data) == 'OK';
@@ -114,13 +114,12 @@ class Dohone
         $i = 0;
         foreach ($data as $key => $value) {
             if ($i == 0) {
-                $base_url = $base_url.'?'.$key.'='.urlencode($value);
+                $base_url = $base_url . '?' . $key . '=' . urlencode($value);
             } else {
-                $base_url = $base_url.'&'.$key.'='.urlencode($value);
+                $base_url = $base_url . '&' . $key . '=' . urlencode($value);
             }
             $i++;
         }
-
         return $base_url;
     }
 
@@ -191,13 +190,12 @@ class Dohone
         ]);
 
         if ($validator->fails()) {
-            return self::reply(! $validator->fails(), $validator->errors());
+            return self::reply(!$validator->fails(), $validator->errors());
         }
 
         $resSplit = explode(':', self::run($data));
 
-        return self::reply(Str::contains($resSplit[0], 'OK'),
-            Str::ucfirst(trim($resSplit[1])));
+        return self::reply(Str::contains($resSplit[0], 'OK'), join(":", $resSplit));
     }
 
     /**
@@ -255,13 +253,11 @@ class Dohone
         ]);
 
         if ($validator->fails()) {
-            return self::reply(! $validator->fails(), $validator->errors());
+            return self::reply(!$validator->fails(), $validator->errors());
         }
 
         $resSplit = explode(':', self::run($data));
-
-        return self::reply(Str::contains($resSplit[0], 'OK'),
-            Str::ucfirst(trim($resSplit[1])));
+        return self::reply(Str::contains($resSplit[0], 'OK'), join(":", $resSplit));
     }
 
     /**
@@ -279,6 +275,6 @@ class Dohone
         $result = curl_exec($curl);
         @curl_close($curl);
 
-        return $result;
+        return mb_convert_encoding($result, 'UTF-8', 'UTF-8');
     }
 }
