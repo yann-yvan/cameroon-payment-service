@@ -124,13 +124,17 @@ class Dohone
     }
 
     /**
+     * @param $success
+     * @param $message
+     * @param bool $codeRequired
      * @return array
      */
-    protected static function reply($success, $message)
+    protected static function reply($success, $message, $codeRequired = false)
     {
         return [
             'status' => $success,
             'message' => $message,
+            'codeRequired' => $codeRequired
         ];
     }
 
@@ -257,7 +261,7 @@ class Dohone
         }
 
         $resSplit = explode(':', self::run($data));
-        return self::reply(Str::contains($resSplit[0], 'OK'), join(":", $resSplit));
+        return self::reply(Str::contains($resSplit[0], 'OK'), join(":", $resSplit), Str::contains(join(":", $resSplit), 'SMS'));
     }
 
     /**
